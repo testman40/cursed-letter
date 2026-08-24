@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121714">
+  <title>呪いの便箋 ～上巻・告白の序章～</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2210%22 fill=%22%23121714%22/><path d=%22M18 14h28v36H18z%22 fill=%22%23efe4c7%22/><path d=%22M23 23h18M23 31h18M23 39h12%22 stroke=%22%236e654f%22 stroke-width=%222%22/></svg>">
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <main class="novel" id="novel" aria-live="polite">
+    <img class="novel__background" id="background" alt="" aria-hidden="true" draggable="false">
+    <div class="novel__shade" aria-hidden="true"></div>
+
+    <section class="title-screen" id="title-screen" aria-labelledby="game-title">
+      <div class="title-screen__card">
+        <p class="title-screen__series">ホラーサウンドノベル</p>
+        <h1 id="game-title">
+          <span class="title-screen__main-title">呪いの便箋</span>
+          <span class="title-screen__volume-title">～上巻・告白の序章～</span>
+        </h1>
+        <p class="title-screen__chapter">第一章「夏の山荘」／第二章「帰ってきた便箋」／第三章「探偵と助手」／第四章「調査開始」／第五章「書かれたこと」</p>
+        <p class="title-screen__status" id="loading-status">台本と素材を読み込んでいます</p>
+        <div class="title-screen__actions">
+          <button class="primary-button" id="start-button" type="button" disabled>はじめる</button>
+          <button class="secondary-button" id="title-load-button" type="button" disabled>ロード</button>
+        </div>
+        <p class="save-summary save-summary--title" id="title-save-summary">セーブデータはありません</p>
+        <p class="title-screen__note">音声はゲーム開始後に再生されます</p>
+        <div class="title-screen__rights" aria-label="権利表記">
+          <p>© 2026 呪いの便箋</p>
+          <p>本作品の画像・音声・文章等の無断転載・再配布・素材としての再利用を禁止します。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="game-screen" id="game-screen" hidden aria-label="ゲーム画面">
+      <header class="game-header">
+        <div>
+          <p class="game-header__chapter">第一章　夏の山荘</p>
+          <p class="game-header__scene" id="scene-label">Scene01</p>
+        </div>
+        <div class="game-header__actions" aria-label="ゲーム設定">
+          <button class="auto-button" id="auto-button" type="button" aria-pressed="false">AUTO OFF</button>
+          <button class="save-button" id="save-button" type="button">セーブ</button>
+          <button class="load-button" id="load-button" type="button">ロード</button>
+          <button class="sound-button" id="sound-button" type="button" aria-pressed="false">音声 ON</button>
+        </div>
+      </header>
+
+      <div class="text-area" id="text-area" tabindex="0" role="group" aria-label="本文。タップ、クリック、Enterキー、Spaceキーで進みます">
+        <div class="speaker" id="speaker" hidden></div>
+        <p class="story-text" id="story-text"></p>
+        <div class="text-area__footer">
+          <span id="record-position">001 / 146</span>
+          <span class="advance-hint">タップ / クリック / Enter</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="end-screen" id="end-screen" hidden aria-labelledby="end-title">
+      <div class="end-screen__card">
+        <h2 id="end-title">第五章終了</h2>
+      </div>
+    </section>
+
+    <dialog class="save-dialog" id="save-dialog" aria-labelledby="save-dialog-title">
+      <div class="save-dialog__content">
+        <h2 id="save-dialog-title">セーブデータ</h2>
+        <p class="save-summary" id="save-dialog-summary">セーブデータはありません</p>
+        <div class="save-dialog__actions">
+          <button class="primary-button" id="confirm-load-button" type="button">ロードする</button>
+          <button class="danger-button" id="delete-save-button" type="button">セーブデータ削除</button>
+          <button class="secondary-button" id="close-save-dialog-button" type="button">閉じる</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="document-dialog" id="document-dialog" aria-labelledby="document-dialog-title">
+      <div class="document-dialog__content">
+        <div class="document-dialog__header">
+          <h2 id="document-dialog-title">山峡日報　1998年8月14日</h2>
+          <button class="secondary-button document-dialog__close" id="close-document-dialog-button" type="button">閉じる</button>
+        </div>
+        <div class="document-dialog__viewport">
+          <img
+            id="document-dialog-image"
+            src="assets/images/ui/DOC_CH4_1998_RIVERSIDE_NEWSPAPER_ARTICLE.png"
+            alt="山峡日報の記事。川辺で女性の遺体発見、転落事故か"
+            draggable="false"
+          >
+        </div>
+        <p class="document-dialog__hint">資料を確認したら「閉じる」を押してください</p>
+      </div>
+    </dialog>
+
+    <p class="save-feedback" id="save-feedback" role="status" aria-live="polite" hidden></p>
+
+    <section class="fatal-error" id="fatal-error" hidden role="alert">
+      <h2>読み込みエラー</h2>
+      <p id="fatal-error-message"></p>
+    </section>
+  </main>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+:root {
+  color-scheme: dark;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+  background: #0c100e;
+  color: #f6f1e6;
+  --ink: #f6f1e6;
+  --muted: #c7c7bd;
+  --panel: rgba(12, 17, 15, 0.88);
+  --panel-strong: rgba(8, 12, 10, 0.95);
+  --line: rgba(241, 230, 201, 0.34);
+  --accent: #e2c98f;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible,
+.text-area:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.novel {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  min-height: 520px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #111813;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.novel img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.novel__background,
+.novel__shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.novel__background {
+  z-index: -3;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transform: scale(1);
+  filter: none;
+  transition: opacity 500ms ease, filter 900ms ease, transform 900ms ease;
+}
+
+.novel__background.is-visible {
+  opacity: 1;
+}
+
+.novel__shade {
+  z-index: -2;
+  background:
+    linear-gradient(180deg, rgba(7, 12, 9, 0.18), transparent 38%),
+    linear-gradient(0deg, rgba(3, 7, 5, 0.72), transparent 55%);
+  transition: background 900ms ease;
+  pointer-events: none;
+}
+
+.novel[data-period="morning"] .novel__background {
+  filter: brightness(1.02) saturate(0.96);
+}
+
+.novel[data-period="evening"] .novel__background {
+  filter: brightness(0.86) sepia(0.08) saturate(0.92);
+}
+
+.novel[data-period="night"] .novel__background {
+  filter: brightness(0.56) saturate(0.72) contrast(1.04);
+}
+
+.novel.has-dedicated-period-background[data-period="evening"] .novel__background,
+.novel.has-dedicated-period-background[data-period="night"] .novel__background {
+  filter: none;
+}
+
+.novel.is-focused .novel__background {
+  transform: scale(1.035);
+}
+
+.novel.is-darkened .novel__shade {
+  background: rgba(3, 5, 4, 0.94);
+}
+
+.title-screen,
+.end-screen,
+.fatal-error {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding:
+    max(24px, var(--safe-top))
+    max(24px, var(--safe-right))
+    max(24px, var(--safe-bottom))
+    max(24px, var(--safe-left));
+  background:
+    radial-gradient(circle at 50% 32%, rgba(90, 112, 77, 0.24), transparent 45%),
+    linear-gradient(145deg, #172019, #090d0b 70%);
+}
+
+.title-screen[hidden],
+.game-screen[hidden],
+.end-screen[hidden],
+.fatal-error[hidden] {
+  display: none;
+}
+
+.title-screen__card,
+.end-screen__card,
+.fatal-error {
+  text-align: center;
+}
+
+.title-screen__card {
+  width: min(92vw, 620px);
+  padding: clamp(30px, 5vw, 52px) clamp(24px, 7vw, 72px);
+  border: 1px solid var(--line);
+  background: rgba(10, 15, 12, 0.74);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.46);
+  backdrop-filter: blur(8px);
+}
+
+.title-screen__series,
+.end-screen__label {
+  margin: 0 0 18px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  letter-spacing: 0.32em;
+}
+
+.title-screen h1 {
+  margin: 0;
+  display: grid;
+  gap: 0.22em;
+  font-size: clamp(2.45rem, 7vw, 4.6rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: 0.12em;
+  text-shadow: 0 6px 28px rgba(0, 0, 0, 0.72);
+}
+
+.title-screen__main-title {
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.title-screen__volume-title {
+  font-size: 0.34em;
+  line-height: 1.35;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+.title-screen__chapter {
+  margin: 24px 0 36px;
+  color: #ddd8cb;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  letter-spacing: 0.16em;
+}
+
+.title-screen__status,
+.title-screen__note {
+  color: var(--muted);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.82rem;
+}
+
+.title-screen__status {
+  min-height: 1.5em;
+  margin-bottom: 16px;
+}
+
+.title-screen__note {
+  margin: 18px 0 0;
+}
+
+.title-screen__rights {
+  margin-top: 14px;
+  color: #aaa99f;
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.title-screen__rights p {
+  margin: 0;
+}
+
+.title-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.save-summary {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.primary-button,
+.auto-button,
+.sound-button,
+.save-button,
+.load-button,
+.secondary-button,
+.danger-button {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: rgba(20, 29, 23, 0.88);
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.primary-button:hover,
+.auto-button:hover,
+.sound-button:hover,
+.save-button:hover,
+.load-button:hover,
+.secondary-button:hover,
+.danger-button:hover {
+  border-color: var(--accent);
+  background: rgba(44, 56, 43, 0.96);
+}
+
+.primary-button:active,
+.auto-button:active,
+.sound-button:active,
+.save-button:active,
+.load-button:active,
+.secondary-button:active,
+.danger-button:active {
+  transform: translateY(1px);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.primary-button {
+  min-width: 190px;
+  min-height: 46px;
+  padding: 13px 28px;
+  letter-spacing: 0.18em;
+}
+
+.secondary-button,
+.danger-button {
+  min-height: 46px;
+  padding: 12px 20px;
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+}
+
+.danger-button {
+  border-color: rgba(218, 144, 130, 0.5);
+  color: #f3d2cc;
+}
+
+.game-screen {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: 100%;
+  height: 100%;
+  padding:
+    max(clamp(14px, 3vw, 34px), var(--safe-top))
+    max(clamp(14px, 3vw, 34px), var(--safe-right))
+    max(clamp(14px, 3vw, 34px), var(--safe-bottom))
+    max(clamp(14px, 3vw, 34px), var(--safe-left));
+}
+
+.game-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.game-header__chapter,
+.game-header__scene {
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.game-header__chapter {
+  font-size: clamp(0.82rem, 2vw, 1rem);
+  letter-spacing: 0.14em;
+}
+
+.game-header__scene {
+  margin-top: 5px;
+  color: var(--muted);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.75rem;
+}
+
+.game-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auto-button,
+.sound-button,
+.save-button,
+.load-button {
+  min-height: 44px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.76rem;
+}
+
+.auto-button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: #fff3d4;
+  background: rgba(94, 76, 37, 0.94);
+  box-shadow: 0 0 0 2px rgba(214, 188, 123, 0.18);
+}
+
+.text-area {
+  align-self: end;
+  width: min(100%, 1040px);
+  min-height: clamp(190px, 29vh, 280px);
+  margin: 0 auto clamp(20px, 4vh, 42px);
+  padding: clamp(22px, 4vw, 38px) clamp(22px, 5vw, 52px) 20px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(7px);
+  cursor: pointer;
+}
+
+.speaker {
+  display: inline-block;
+  min-width: 7em;
+  margin: -58px 0 19px -14px;
+  padding: 9px 24px;
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+}
+
+.speaker[hidden] {
+  display: none;
+}
+
+.story-text {
+  min-height: 4.8em;
+  margin: 0;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  line-height: 2;
+  letter-spacing: 0.035em;
+  white-space: pre-wrap;
+}
+
+.text-area.is-direction .story-text {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  letter-spacing: 0.12em;
+}
+
+.text-area[data-record-type="document"] .story-text {
+  display: grid;
+  min-height: 5.4em;
+  place-items: center;
+  padding: 0.8em 1em;
+  border: 1px solid rgba(222, 207, 164, 0.42);
+  background: rgba(239, 228, 199, 0.08);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.text-area__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.72rem;
+}
+
+.advance-hint {
+  animation: breathe 1.8s ease-in-out infinite;
+}
+
+.end-screen {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(85, 106, 74, 0.22), transparent 44%),
+    rgba(8, 12, 10, 0.93);
+}
+
+.end-screen__card {
+  padding: 42px;
+}
+
+.end-screen h2 {
+  margin: 0 0 22px;
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.end-screen p:last-child,
+.fatal-error p {
+  color: var(--muted);
+}
+
+.save-dialog,
+.document-dialog {
+  width: min(92vw, 520px);
+  max-width: calc(100vw - var(--safe-left) - var(--safe-right) - 24px);
+  padding: 0;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--panel-strong);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.72);
+}
+
+.save-dialog::backdrop,
+.document-dialog::backdrop {
+  background: rgba(2, 5, 3, 0.78);
+  backdrop-filter: blur(3px);
+}
+
+.save-dialog__content {
+  padding: clamp(24px, 5vw, 42px);
+  text-align: center;
+}
+
+.save-dialog h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.save-dialog__actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.save-dialog__actions .primary-button {
+  width: 100%;
+}
+
+.document-dialog {
+  width: min(94vw, 1000px);
+  max-width: calc(100vw - var(--safe-left) - var(--safe-right) - 24px);
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px);
+  overflow: hidden;
+}
+
+.document-dialog__content {
+  display: flex;
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 26px);
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(14px, 2.5vw, 24px);
+}
+
+.document-dialog__header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.document-dialog h2 {
+  margin: 0;
+  font-size: clamp(0.9rem, 2vw, 1.15rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.document-dialog__close {
+  min-width: 88px;
+  min-height: 44px;
+  flex: 0 0 auto;
+}
+
+.document-dialog__viewport {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #d7d2c7;
+}
+
+.document-dialog__viewport img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.document-dialog__hint {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--muted);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.save-feedback {
+  position: fixed;
+  z-index: 20;
+  right: max(16px, var(--safe-right));
+  bottom: max(16px, var(--safe-bottom));
+  max-width: min(88vw, 420px);
+  margin: 0;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(12, 22, 16, 0.96);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: 0.84rem;
+}
+
+.save-feedback.is-error {
+  border-color: rgba(218, 144, 130, 0.66);
+  color: #f7d5cf;
+}
+
+.fatal-error {
+  align-content: center;
+  background: #17100f;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .novel {
+    min-height: 0;
+  }
+
+  .novel__background {
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .novel.is-focused .novel__background {
+    transform: none;
+  }
+
+  .game-screen {
+    padding:
+      max(12px, var(--safe-top))
+      max(12px, var(--safe-right))
+      max(12px, var(--safe-bottom))
+      max(12px, var(--safe-left));
+  }
+
+  .game-header {
+    display: grid;
+    gap: 10px;
+  }
+
+  .game-header__actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .text-area {
+    min-height: 210px;
+    max-height: min(43dvh, 360px);
+    margin-bottom: 8px;
+    padding: 24px 18px 15px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .speaker {
+    margin: -48px 0 14px -8px;
+    padding: 8px 18px;
+  }
+
+  .story-text {
+    min-height: 4.4em;
+    font-size: clamp(0.95rem, 4.1vw, 1.05rem);
+    line-height: 1.82;
+  }
+
+  .advance-hint {
+    display: none;
+  }
+
+  .auto-button,
+  .sound-button,
+  .save-button,
+  .load-button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 4px;
+    font-size: 0.7rem;
+  }
+
+  .title-screen {
+    align-items: center;
+    overflow-y: auto;
+  }
+
+  .title-screen__card {
+    width: 100%;
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px);
+    padding: 28px 18px;
+    overflow-y: auto;
+  }
+
+  .title-screen h1 {
+    font-size: clamp(2.1rem, 13vw, 3.4rem);
+  }
+
+  .title-screen__chapter {
+    margin: 18px 0 26px;
+    letter-spacing: 0.1em;
+  }
+
+  .title-screen__actions {
+    display: grid;
+  }
+
+  .title-screen__actions .primary-button,
+  .title-screen__actions .secondary-button {
+    width: 100%;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .novel {
+    min-height: 0;
+  }
+
+  .game-screen {
+    padding:
+      max(8px, var(--safe-top))
+      max(10px, var(--safe-right))
+      max(8px, var(--safe-bottom))
+      max(10px, var(--safe-left));
+  }
+
+  .game-header__scene {
+    margin-top: 2px;
+  }
+
+  .game-header__actions {
+    gap: 6px;
+  }
+
+  .auto-button,
+  .sound-button,
+  .save-button,
+  .load-button {
+    min-height: 44px;
+    padding: 7px 10px;
+    font-size: 0.68rem;
+  }
+
+  .text-area {
+    min-height: 132px;
+    max-height: 54dvh;
+    margin-bottom: 2px;
+    padding: 18px 22px 11px;
+    overflow-y: auto;
+  }
+
+  .speaker {
+    margin: -35px 0 8px -8px;
+    padding: 6px 15px;
+    font-size: 0.82rem;
+  }
+
+  .story-text {
+    min-height: 3em;
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  .text-area__footer {
+    margin-top: 7px;
+  }
+
+  .title-screen__card {
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 16px);
+    padding: 18px 28px;
+    overflow-y: auto;
+  }
+
+  .title-screen h1 {
+    font-size: clamp(2rem, 9vh, 3rem);
+  }
+
+  .title-screen__chapter {
+    margin: 8px 0 12px;
+  }
+
+  .title-screen__series,
+  .title-screen__note,
+  .save-summary--title {
+    margin-block: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
