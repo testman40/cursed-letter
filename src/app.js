@@ -72,6 +72,21 @@ const CHAPTERS = Object.freeze([
       typeCounts: Object.freeze({ dialogue: 81, narration: 57, direction: 9, document: 3 }),
     }),
   }),
+  Object.freeze({
+    id: "CH06",
+    label: "第六章",
+    title: "山荘の過去",
+    endTitle: "第六章終了",
+    scenarioUrl: "data/scenario/第六章_山荘の過去_台本.csv",
+    specification: Object.freeze({
+      chapterId: "CH06",
+      recordCount: 185,
+      scenes: Object.freeze([
+        "Scene01", "Scene02", "Scene03", "Scene04", "Scene05", "Scene06",
+      ]),
+      typeCounts: Object.freeze({ dialogue: 72, narration: 84, direction: 21, document: 8 }),
+    }),
+  }),
 ]);
 
 const CHAPTER_BY_ID = new Map(CHAPTERS.map((chapter) => [chapter.id, chapter]));
@@ -98,6 +113,7 @@ const AUDIO_ASSETS = Object.freeze({
     BGM_CH3_OBSERVATION: "assets/audio/bgm/BGM_CH3_OBSERVATION.mp3",
     BGM_CH3_YAMAZOE_REQUEST: "assets/audio/bgm/BGM_CH3_YAMAZOE_REQUEST.mp3",
     BGM_CH3_CURSED_LETTER_REVEAL: "assets/audio/bgm/BGM_CH3_CURSED_LETTER_REVEAL.mp3",
+    BGM_CH6_CLOSING_IN: "assets/audio/bgm/BGM_CH6_CLOSING_IN.mp3",
   }),
   environment: Object.freeze({
     ENV_CH1_MOUNTAIN_SUMMER_DAY: "assets/audio/sfx/ENV_CH1_MOUNTAIN_SUMMER_DAY.mp3",
@@ -152,6 +168,16 @@ const DOCUMENT_DISPLAY_ASSETS = Object.freeze({
     title: "保存ログ　1996年",
     alt: "1996年の通信ログ。山荘の古い便箋と呪いの便箋という呼び名が記されている",
   }),
+  "DOC_CH6_1988_WHITE_WOMAN_MAGAZINE_FEATURE.png": Object.freeze({
+    src: "assets/images/ui/DOC_CH6_1988_WHITE_WOMAN_MAGAZINE_FEATURE.png",
+    title: "1988年　ゴシップ雑誌特集",
+    alt: "川辺の写真と白い服の女性のイメージ写真を掲載した1988年のゴシップ雑誌特集",
+  }),
+  "DOC_CH6_LODGE_GUEST_HISTORY_EXCERPT.png": Object.freeze({
+    src: "assets/images/ui/DOC_CH6_LODGE_GUEST_HISTORY_EXCERPT.png",
+    title: "山荘宿泊記録",
+    alt: "同じ一家が複数年にわたり山荘を利用していたことを示す宿泊記録",
+  }),
 });
 
 const elements = {
@@ -159,6 +185,7 @@ const elements = {
   titleScreen: document.querySelector("#title-screen"),
   loadingStatus: document.querySelector("#loading-status"),
   startButton: document.querySelector("#start-button"),
+  chapterSelectButton: document.querySelector("#chapter-select-button"),
   titleLoadButton: document.querySelector("#title-load-button"),
   titleSaveSummary: document.querySelector("#title-save-summary"),
   gameScreen: document.querySelector("#game-screen"),
@@ -177,6 +204,9 @@ const elements = {
   confirmLoadButton: document.querySelector("#confirm-load-button"),
   deleteSaveButton: document.querySelector("#delete-save-button"),
   closeSaveDialogButton: document.querySelector("#close-save-dialog-button"),
+  chapterSelectDialog: document.querySelector("#chapter-select-dialog"),
+  chapterSelectButtons: [...document.querySelectorAll("[data-chapter-id]")],
+  closeChapterSelectDialogButton: document.querySelector("#close-chapter-select-dialog-button"),
   documentDialog: document.querySelector("#document-dialog"),
   documentDialogTitle: document.querySelector("#document-dialog-title"),
   documentDialogImage: document.querySelector("#document-dialog-image"),
@@ -193,6 +223,7 @@ const state = {
   summaries: {},
   index: -1,
   currentChapterId: "",
+  currentSceneKey: "",
   started: false,
   ended: false,
   advancing: false,
@@ -333,6 +364,13 @@ function normalizeRecord(record, chapterPosition, chapterRecordCount) {
       ...common,
       environment: "",
       sfx: "",
+      visualPeriod: record.time_cue,
+    };
+  }
+
+  if (record.chapter_id === "CH06") {
+    return {
+      ...common,
       visualPeriod: record.time_cue,
     };
   }
@@ -501,8 +539,28 @@ function resetAudioForLoad() {
   }
   state.currentBgm = "";
   state.currentEnvironment = "";
+  state.currentSceneKey = "";
   state.lastSfxRecord = "";
   state.pendingAudioResume = false;
+}
+
+function clearEnvironmentAtSceneBoundary(record) {
+  const sceneKey = `${record.chapter_id}:${record.scene_id}`;
+  const changedScene = Boolean(state.currentSceneKey) && state.currentSceneKey !== sceneKey;
+
+  if (changedScene && !record.environment && state.currentEnvironment) {
+    environmentAudio.pause();
+    environmentAudio.currentTime = 0;
+    state.currentEnvironment = "";
+    state.events.push({
+      type: "audio-cleared",
+      kind: "environment",
+      reason: "scene-change",
+      index: state.index,
+    });
+  }
+
+  state.currentSceneKey = sceneKey;
 }
 
 function restoreLoopingAudio(kind, id, shouldPlay) {
@@ -628,12 +686,12 @@ function scheduleAutoAdvance(record) {
 }
 
 function documentDisplayAsset(record) {
-  if (record.chapter_id !== "CH04" || record.record_type !== "document") {
+  if (!["CH04", "CH06"].includes(record.chapter_id) || record.record_type !== "document") {
     return null;
   }
 
   const filename = Object.keys(DOCUMENT_DISPLAY_ASSETS).find((candidate) => (
-    record.direction.includes(candidate)
+    record.text.includes(candidate) || record.direction.includes(candidate)
   ));
   if (!filename) {
     return null;
@@ -665,7 +723,13 @@ function showDocumentForRecord(record) {
 function resumeAfterDocumentClose() {
   state.events.push({ type: "document-closed", index: state.index });
   elements.textArea.focus({ preventScroll: true });
-  scheduleAutoAdvance(state.records[state.index]);
+  const record = state.records[state.index];
+  if (record?.chapter_id === "CH06" && documentDisplayAsset(record)) {
+    state.advanceLockUntil = 0;
+    advance("document-close");
+    return;
+  }
+  scheduleAutoAdvance(record);
 }
 
 function updateAutoButton() {
@@ -965,6 +1029,7 @@ function renderRecord(index, { syncSound = true } = {}) {
   state.visitedScenes.add(`${record.chapter_id}:${record.scene_id}`);
 
   updateChapterUi(record);
+  clearEnvironmentAtSceneBoundary(record);
   applyBackground(record.background);
   applyVisualDirection(record);
   if (syncSound) {
@@ -972,7 +1037,9 @@ function renderRecord(index, { syncSound = true } = {}) {
   }
 
   elements.sceneLabel.textContent = `${record.scene_id}　${record.subsection}`;
-  elements.storyText.textContent = record.text;
+  const isDocumentImageReference = record.record_type === "document"
+    && /\.(?:png|jpe?g|webp)$/i.test(record.text.trim());
+  elements.storyText.textContent = isDocumentImageReference ? "" : record.text;
   elements.recordPosition.textContent = `${String(record.chapterPosition).padStart(3, "0")} / ${record.chapterRecordCount}`;
   elements.textArea.classList.toggle("is-direction", record.record_type === "direction");
   elements.textArea.dataset.recordType = record.record_type;
@@ -1036,6 +1103,49 @@ function startGame() {
   elements.gameScreen.hidden = false;
   renderRecord(0);
   elements.textArea.focus({ preventScroll: true });
+}
+
+function openChapterSelectDialog() {
+  if (!elements.chapterSelectDialog.open) {
+    elements.chapterSelectDialog.showModal();
+  }
+}
+
+function startSelectedChapter(chapterId) {
+  if (state.started || state.records.length === 0) {
+    return;
+  }
+
+  const targetIndex = state.records.findIndex((record) => (
+    record.chapter_id === chapterId
+    && record.scene_id === "Scene01"
+    && record.sequence === 1
+  ));
+  if (targetIndex < 0) {
+    showFatalError(new Error(`開始位置がありません: ${chapterId}:Scene01:1`));
+    return;
+  }
+
+  disableAuto("chapter-select");
+  resetAudioForLoad();
+  state.started = true;
+  state.ended = false;
+  state.advancing = false;
+  state.advanceLockUntil = 0;
+  state.currentChapterId = "";
+  state.background = "";
+  state.processedRecordKeys = new Set();
+  state.visitedScenes = new Set();
+
+  elements.titleScreen.hidden = true;
+  elements.endScreen.hidden = true;
+  elements.fatalError.hidden = true;
+  elements.gameScreen.hidden = false;
+  if (elements.chapterSelectDialog.open) elements.chapterSelectDialog.close();
+
+  renderRecord(targetIndex);
+  elements.textArea.focus({ preventScroll: true });
+  state.events.push({ type: "chapter-selected", chapterId, index: targetIndex });
 }
 
 function endChapter() {
@@ -1124,6 +1234,7 @@ async function loadGame() {
     await preloadBackgrounds(state.records);
     elements.loadingStatus.textContent = "準備ができました";
     elements.startButton.disabled = false;
+    elements.chapterSelectButton.disabled = false;
     updateSaveUi();
     state.events.push({
       type: "game-ready",
@@ -1138,6 +1249,7 @@ async function loadGame() {
 enableMaterialProtection(elements.novel);
 
 elements.startButton.addEventListener("click", startGame);
+elements.chapterSelectButton.addEventListener("click", openChapterSelectDialog);
 elements.titleLoadButton.addEventListener("click", openSaveDialog);
 elements.autoButton.addEventListener("click", toggleAuto);
 elements.saveButton.addEventListener("click", () => saveCurrentGame());
@@ -1146,6 +1258,10 @@ elements.soundButton.addEventListener("click", toggleSound);
 elements.confirmLoadButton.addEventListener("click", () => loadSavedGame());
 elements.deleteSaveButton.addEventListener("click", () => deleteSaveData());
 elements.closeSaveDialogButton.addEventListener("click", () => elements.saveDialog.close());
+elements.chapterSelectButtons.forEach((button) => {
+  button.addEventListener("click", () => startSelectedChapter(button.dataset.chapterId));
+});
+elements.closeChapterSelectDialogButton.addEventListener("click", () => elements.chapterSelectDialog.close());
 elements.closeDocumentDialogButton.addEventListener("click", () => elements.documentDialog.close());
 elements.documentDialog.addEventListener("close", resumeAfterDocumentClose);
 elements.textArea.addEventListener("click", () => advance("click"));
