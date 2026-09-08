@@ -6,7 +6,7 @@
 
 ## Ver1.0.1
 
-- 公開日：未公開
+- 公開日：GitHub Pages 2026年9月8日／ChatGPT Sites 未公開
 - 公開先：GitHub Pages（上巻）、ChatGPT Sites（下巻）
 
 ### ユーザー向け更新内容
@@ -37,7 +37,8 @@
 
 #### GitHub Pages（上巻）
 
-- 公開commit：未確定
+- 公開日：2026年9月8日
+- 公開commit：`63a729a95c3f38cec9defc8e90aa76d719b0ea1e`
 
 #### ChatGPT Sites（下巻）
 
