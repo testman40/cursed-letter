@@ -28,7 +28,7 @@
 "CH06","Scene02","事故の後に残ったもの","1","direction","","","同じ頃・菊池探偵事務所","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","時間関係を表示","BGM_CH3_YAMAZOE_REQUEST.mp3を開始"
 "CH06","Scene02","事故の後に残ったもの","2","narration","","","机の上には、確認できた事実、聞き取った話、山添の父の推測が分けて置かれていた。","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","三つの資料群を示す","継続"
 "CH06","Scene02","事故の後に残ったもの","3","narration","","","1988年の事故記録と所有記録を重ねると、当時の山荘所有者が山添の父だったことが分かる。","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","年代を照合","継続"
-"CH06","Scene02","事故の後に残ったもの","4","dialogue","直人","","「亡くなった二人のうち、一人は山添さんのお父さんの姪です」","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","公的記録を示す","継続"
+"CH06","Scene02","事故の後に残ったもの","4","dialogue","直人","","「亡くなった二人のうち、一人は山添さんの姪です」","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","公的記録を示す","継続"
 "CH06","Scene02","事故の後に残ったもの","5","dialogue","菊池","","「第三者が関わった痕跡は確認されず、事故として処理されている」","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","結論欄を確認","継続"
 "CH06","Scene02","事故の後に残ったもの","6","dialogue","山添","","「父が、あの川を気にするようになった理由の一つだと思います」","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","記録へ目を落とす","継続"
 "CH06","Scene02","事故の後に残ったもの","7","narration","","","山添の父のメモは事故の結論を覆していない。ただ、事故後も川の状態を調べ続けていた。","assets/images/backgrounds/BG_CH3_KIKUCHI_DETECTIVE_OFFICE_INTERIOR_DAY.png","","BGM_CH3_YAMAZOE_REQUEST","","day","手書きメモへ寄る","継続"

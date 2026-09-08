@@ -64,12 +64,12 @@ const CHAPTERS = Object.freeze([
     scenarioUrl: "data/scenario/第五章_書かれたこと_台本.csv",
     specification: Object.freeze({
       chapterId: "CH05",
-      recordCount: 150,
+      recordCount: 157,
       scenes: Object.freeze([
         "Scene01", "Scene02", "Scene03", "Scene04",
         "Scene05", "Scene06", "Scene07", "Scene08",
       ]),
-      typeCounts: Object.freeze({ dialogue: 81, narration: 57, direction: 9, document: 3 }),
+      typeCounts: Object.freeze({ dialogue: 81, narration: 57, direction: 16, document: 3 }),
     }),
   }),
   Object.freeze({
